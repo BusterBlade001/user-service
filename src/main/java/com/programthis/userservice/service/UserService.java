@@ -1,9 +1,10 @@
-package com.programthis.user_service.service;
+package com.programthis.userservice.service;
 
-import com.programthis.user_service.model.User;
-import com.programthis.user_service.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import com.programthis.userservice.model.User;
+import com.programthis.userservice.repository.UserRepository;
 
 import java.util.List;
 import java.util.Optional;

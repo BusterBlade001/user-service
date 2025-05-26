@@ -1,4 +1,4 @@
-package com.programthis.user_service.model;
+package com.programthis.userservice.model;
 
 import jakarta.persistence.*;
 import lombok.Data;

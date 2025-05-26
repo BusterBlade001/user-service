@@ -1,8 +1,10 @@
-package com.programthis.user_service.repository;
+package com.programthis.userservice.repository;
 
-import com.programthis.user_service.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import com.programthis.userservice.model.User;
+
 import java.util.Optional;
 
 @Repository

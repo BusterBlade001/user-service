@@ -1,11 +1,12 @@
-package com.programthis.user_service.controller;
+package com.programthis.userservice.controller;
 
-import com.programthis.user_service.model.User;
-import com.programthis.user_service.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import com.programthis.userservice.model.User;
+import com.programthis.userservice.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
