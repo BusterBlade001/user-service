@@ -1,6 +1,9 @@
 package com.programthis.userservice.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.CollectionModel;
+import org.springframework.hateoas.EntityModel;
+import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,10 +13,14 @@ import com.programthis.userservice.service.UserService;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/api/users")
@@ -23,39 +30,58 @@ public class UserController {
     private UserService userService;
 
     @GetMapping
-    public List<User> getAllUsers() {
-        return userService.getAllUsers();
+    public CollectionModel<EntityModel<User>> getAllUsers() {
+        List<EntityModel<User>> users = userService.getAllUsers().stream()
+                .map(user -> EntityModel.of(user,
+                        linkTo(methodOn(UserController.class).getUserById(user.getId())).withSelfRel(),
+                        linkTo(methodOn(UserController.class).getAllUsers()).withRel("users")))
+                .collect(Collectors.toList());
+
+        return CollectionModel.of(users, linkTo(methodOn(UserController.class).getAllUsers()).withSelfRel());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUserById(@PathVariable Long id) {
-        Optional<User> user = userService.getUserById(id);
-        return user.map(ResponseEntity::ok)
-                   .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<EntityModel<User>> getUserById(@PathVariable Long id) {
+        return userService.getUserById(id)
+                .map(user -> {
+                    EntityModel<User> resource = EntityModel.of(user,
+                            linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel(),
+                            linkTo(methodOn(UserController.class).getAllUsers()).withRel("users"));
+                    return ResponseEntity.ok(resource);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
+
     @PostMapping("/register")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<?> registerUser(@RequestBody User registrationRequest) {
         try {
             User newUser = userService.registerUser(registrationRequest);
-            return ResponseEntity.status(HttpStatus.CREATED).body(newUser);
+            EntityModel<User> resource = EntityModel.of(newUser,
+                    linkTo(methodOn(UserController.class).getUserById(newUser.getId())).withSelfRel());
+            return ResponseEntity
+                    .status(HttpStatus.CREATED)
+                    .body(resource);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
-        Optional<User> updatedUser = userService.updateUser(id, userDetails);
-        return updatedUser.map(ResponseEntity::ok)
-                          .orElseGet(() -> ResponseEntity.notFound().build());
+    public ResponseEntity<EntityModel<User>> updateUser(@PathVariable Long id, @RequestBody User userDetails) {
+        return userService.updateUser(id, userDetails)
+                .map(user -> {
+                    EntityModel<User> resource = EntityModel.of(user,
+                            linkTo(methodOn(UserController.class).getUserById(id)).withSelfRel());
+                    return ResponseEntity.ok(resource);
+                })
+                .orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteUser(@PathVariable Long id) {
+    public ResponseEntity<?> deleteUser(@PathVariable Long id) {
         userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
     }
 
     @PostMapping("/login")
