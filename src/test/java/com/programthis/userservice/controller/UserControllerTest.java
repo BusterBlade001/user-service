@@ -1,7 +1,6 @@
-package com.programthis.user_service.controller;
+package com.programthis.userservice.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.programthis.userservice.controller.UserController;
 import com.programthis.userservice.model.User;
 import com.programthis.userservice.service.UserService;
 import org.junit.jupiter.api.BeforeEach;

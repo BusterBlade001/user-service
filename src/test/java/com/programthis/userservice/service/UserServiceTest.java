@@ -1,8 +1,7 @@
-package com.programthis.user_service.service;
+package com.programthis.userservice.service;
 
 import com.programthis.userservice.model.User;
 import com.programthis.userservice.repository.UserRepository;
-import com.programthis.userservice.service.UserService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
