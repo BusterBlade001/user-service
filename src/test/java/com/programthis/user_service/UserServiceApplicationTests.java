@@ -1,4 +1,4 @@
-package com.programthis.userservice;
+package com.programthis.user_service;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
